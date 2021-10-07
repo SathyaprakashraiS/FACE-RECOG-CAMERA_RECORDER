@@ -25,12 +25,14 @@ import sys
 import numpy as np
 import time
 import imutils
+import datetime
 
 cascPath = sys.argv[1]
 faceCascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 bodyCascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_fullbody.xml')
 video_capture = cv2.VideoCapture(0)
 k=0
+
 
 while True:
     # Capture frame-by-frame
@@ -62,12 +64,13 @@ while True:
     		if ret:
     			out.write(frame)
     	out.release()
-    	
-    '''
+
+    
     for (x, y, w, h) in bodies:
     	cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
     	fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-    	fname=str("test")+str(k)+str(".mp4")
+    	ctime=datetime.datetime.now()
+    	fname=str(ctime)+str(".mp4")
     	out = cv2.VideoWriter(fname,fourcc, 20.0, (640, 480))
     	#recos(k)
     	k+=1
@@ -79,7 +82,7 @@ while True:
     		if ret:
     			out.write(frame)
     	out.release()
-    '''
+    
 
     # Display the resulting frame
     cv2.imshow('Video', frame)
