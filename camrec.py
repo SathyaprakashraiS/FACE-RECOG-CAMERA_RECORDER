@@ -24,29 +24,11 @@ import cv2
 import sys
 import numpy as np
 import time
-
-def recos(k):
-	capture_duration = 5
-	recos_cap=cv2.VideoCapture(0)
-	recos_fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-	recos_fname=str("test")+str(k)+str(".mp4")
-	recos_out = cv2.VideoWriter(recos_fname, recos_fourcc, 20.0, (640, 480))
-	start_time = time.time()
-	while( int(time.time() - start_time) < capture_duration ):
-		recos_ret,recos_frame = recos_cap.read()
-		recos_frame = cv2.resize(recos_frame,(640, 480))
-		if recos_ret==True:
-			# write the flipped frame
-			recos_out.write(recos_frame)
-			cv2.imshow('recosing',recos_frame)
-		else:
-			break
-	recos_out.release()
-	recos_cap.release()
-	return 0
+import imutils
 
 cascPath = sys.argv[1]
 faceCascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+bodyCascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_fullbody.xml')
 video_capture = cv2.VideoCapture(0)
 k=0
 
@@ -62,6 +44,7 @@ while True:
         minSize=(30, 30),
         flags=cv2.CASCADE_SCALE_IMAGE
     )
+    bodies=bodyCascade.detectMultiScale(gray,1.3,5)
 
     # Draw a rectangle around the faces
     for (x, y, w, h) in faces:
@@ -71,7 +54,7 @@ while True:
     	out = cv2.VideoWriter(fname,fourcc, 20.0, (640, 480))
     	#recos(k)
     	k+=1
-    	capture_duration = 5
+    	capture_duration = 5 #records for a minimum of 5 seconds when a face detected
     	start_time = time.time()
     	while( int(time.time() - start_time) < capture_duration ):
     		ret,frame = video_capture.read()
@@ -79,6 +62,24 @@ while True:
     		if ret:
     			out.write(frame)
     	out.release()
+    	
+    '''
+    for (x, y, w, h) in bodies:
+    	cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
+    	fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+    	fname=str("test")+str(k)+str(".mp4")
+    	out = cv2.VideoWriter(fname,fourcc, 20.0, (640, 480))
+    	#recos(k)
+    	k+=1
+    	capture_duration = 5 #records for a minimum of 5 seconds when a face detected
+    	start_time = time.time()
+    	while( int(time.time() - start_time) < capture_duration ):
+    		ret,frame = video_capture.read()
+    		frame = cv2.resize(frame, (640, 480))
+    		if ret:
+    			out.write(frame)
+    	out.release()
+    '''
 
     # Display the resulting frame
     cv2.imshow('Video', frame)
